@@ -1,0 +1,64 @@
+plugins {
+    id 'java'
+}
+
+group 'craftofprogramming.com'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'io.cucumber:cucumber-java:latest.release'
+    testImplementation 'io.cucumber:cucumber-junit:latest.release'
+    testImplementation 'io.cucumber:cucumber-core:latest.release'
+
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.13.3'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.13.3'
+
+    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.4.1'
+    testCompile group: 'org.hamcrest', name: 'hamcrest', version: '2.1'
+    testRuntime group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.4.1'
+}
+
+configurations {
+    cucumberRuntime {
+        extendsFrom testImplementation
+    }
+}
+
+test {
+    useJUnitPlatform {
+        includeTags 'FeatureTests & FlakyTests'
+    }
+}
+
+task cucumber() {
+    dependsOn assemble, compileTestJava
+    doLast {
+        javaexec {
+            main = "io.cucumber.core.cli.Main"
+            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+//            args = ['--help']
+//            args = ['--dry-run', '--glue', 'com.craftofprogramming', 'src/test/resources']
+//            args = ['--dry-run', '--plugin', 'pretty', '--glue', 'com.craftofprogramming', 'src/test/resources']
+//            args = ['--plugin', 'pretty', '--glue', 'com.craftofprogramming', 'src/test/resources']
+//            args = ['--plugin', 'pretty', '--glue', 'com.craftofprogramming',
+//                    'src/test/resources/com/craftofprogramming/ExampleWithScenarioOutline.feature',
+//                    'src/test/resources/com/craftofprogramming/ExampleWithBasicBookQueries.feature']
+//            args = ['--plugin', 'pretty', '--glue', 'com.craftofprogramming',
+//                    'src/test/resources/com/craftofprogramming/ExampleWithBasicBookQueries.feature',
+//                    'src/test/resources/com/craftofprogramming/ExampleWithStepArguments.feature',
+//                    '--name', 'Search a book given its title',
+//                    '--name',  'Simple Example with A Data Table'
+//            ]
+//            args = ['--threads', 2, '--plugin', 'pretty', '--plugin', 'timeline:out/ParallelRun', '--glue', 'com.craftofprogramming',
+//                    'src/test/resources/com/craftofprogramming/ExampleWithBasicBookQueries.feature',
+//                    'src/test/resources/com/craftofprogramming/ExampleWithStepArguments.feature']
+            args = ['--plugin', 'html:out/htmlReport.html', '--glue', 'com.craftofprogramming', 'src/test/resources']
+        }
+    }
+}

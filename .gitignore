@@ -1,0 +1,5 @@
+/build/*.*
+/out/*.*
+/shelf/
+/workspace.xml
+/.idea
